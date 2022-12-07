@@ -1,6 +1,6 @@
 // Importerer React-elementer
 import React, { useState} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, SafeAreaView, ScrollView} from 'react-native';
 import { SearchBar } from 'react-native-elements';
 import Ionicons from "react-native-vector-icons/Ionicons";
 
@@ -10,48 +10,51 @@ export default function SavedHobbies() {
         return (
             // Returnerer view'et for gemte events oprettet i applikationen. Da funktionaliteten endnu ikke er implementeret
             // viser siden udelukkende et statisk eksempel på den endelige løsning
-            <View>
+            <SafeAreaView>
+                <View>
+                    <Text style = { styles.header }>Saved Events</Text>
                 {/* Illusterer en søgebar, som dog endnu ikke funktionelt er implementeret */}
-                <SearchBar placeholder = "Type Here..." onChangeText = { updateSearch } value = { search } lightTheme = 'false'/>
-            <View style = { styles.container }>
-                <TouchableOpacity style = { styles.hobby }>
-                    <Text style = { { fontWeight: 'bold' } }>Saved Event 1</Text>
+                    <SearchBar placeholder = "Type Here..." onChangeText = { updateSearch } value = { search } lightTheme = 'false'/>
+                </View>
+                <ScrollView>
+                    <TouchableOpacity style = { styles.hobby }>
+                        <Text style = { { fontWeight: 'bold' } }>Saved Event 1</Text>
+                        {/* Returnerer knap til at gemme event. Eftersom funktionaliteten endnu ikke er implementeret,
+                        er knappen statisk udelukkende til illustration, hvorfor der intet sker ved OnPress() */}
+                        <TouchableOpacity style = { { alignItems: 'flex-end' } } onPress = { () => { } }>
+                            <Ionicons name = "heart" size = { 25 }/>
+                        </TouchableOpacity>
+                        <Text>Date</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style = { styles.hobby }>
+                        <Text style = { { fontWeight: 'bold' } }>Saved Event 2</Text>
                     {/* Returnerer knap til at gemme event. Eftersom funktionaliteten endnu ikke er implementeret,
                         er knappen statisk udelukkende til illustration, hvorfor der intet sker ved OnPress() */}
-                    <TouchableOpacity style = { { alignItems: 'flex-end' } } onPress = { () => { } }>
-                        <Ionicons name = "heart" size = { 25 }/>
+                        <TouchableOpacity style = { { alignItems: 'flex-end' } } onPress = { () => { } }>
+                            <Ionicons name = "heart" size = { 25 }/>
+                        </TouchableOpacity>
+                        <Text>Date</Text>
                     </TouchableOpacity>
-                    <Text>Date</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style = { styles.hobby }>
-                    <Text style = { { fontWeight: 'bold' } }>Saved Event 2</Text>
-                    {/* Returnerer knap til at gemme event. Eftersom funktionaliteten endnu ikke er implementeret,
+                    <TouchableOpacity style = { styles.hobby }>
+                        <Text style = { { fontWeight: 'bold' } }>Saved Event 3</Text>
+                        {/* Returnerer knap til at gemme event. Eftersom funktionaliteten endnu ikke er implementeret,
                         er knappen statisk udelukkende til illustration, hvorfor der intet sker ved OnPress() */}
-                    <TouchableOpacity style = { { alignItems: 'flex-end' } } onPress = { () => { } }>
-                        <Ionicons name = "heart" size = { 25 }/>
+                        <TouchableOpacity style = { { alignItems: 'flex-end' } } onPress = { () => { } }>
+                            <Ionicons name = "heart" size = { 25 }/>
+                        </TouchableOpacity>
+                        <Text>Date</Text>
                     </TouchableOpacity>
-                    <Text>Date</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style = { styles.hobby }>
-                    <Text style = { { fontWeight: 'bold' } }>Saved Event 3</Text>
-                    {/* Returnerer knap til at gemme event. Eftersom funktionaliteten endnu ikke er implementeret,
+                    <TouchableOpacity style = { styles.hobby }>
+                        <Text style = { { fontWeight: 'bold' } }>Saved Event 4</Text>
+                        {/* Returnerer knap til at gemme event. Eftersom funktionaliteten endnu ikke er implementeret,
                         er knappen statisk udelukkende til illustration, hvorfor der intet sker ved OnPress() */}
-                    <TouchableOpacity style = { { alignItems: 'flex-end' } } onPress = { () => { } }>
-                        <Ionicons name = "heart" size = { 25 }/>
+                        <TouchableOpacity style = { { alignItems: 'flex-end' } } onPress = { () => { } }>
+                            <Ionicons name = "heart" size = { 25 }/>
+                        </TouchableOpacity>
+                        <Text>Date</Text>
                     </TouchableOpacity>
-                    <Text>Date</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style = { styles.hobby }>
-                    <Text style = { { fontWeight: 'bold' } }>Saved Event 4</Text>
-                    {/* Returnerer knap til at gemme event. Eftersom funktionaliteten endnu ikke er implementeret,
-                        er knappen statisk udelukkende til illustration, hvorfor der intet sker ved OnPress() */}
-                    <TouchableOpacity style = { { alignItems: 'flex-end' } } onPress = { () => { } }>
-                        <Ionicons name = "heart" size = { 25 }/>
-                    </TouchableOpacity>
-                    <Text>Date</Text>
-                </TouchableOpacity>
-            </View>
-        </View>
+                </ScrollView>
+            </SafeAreaView>
     );
 };
 
@@ -64,16 +67,16 @@ const styles = StyleSheet.create({
     header: {
         fontSize: 20,
         fontWeight: "bold",
-        padding: 20,
+        padding: 10,
+        alignSelf: 'center',
     },
     hobby: {
-        width: 365,
+        width: '96%',
         backgroundColor: 'teal',
         borderRadius: 10,
         margin: 5,
         padding: 5,
         height: 70,
-        marginRight: 10,
-        justifyContent: 'center',
+        alignSelf: 'center',
     },
 })

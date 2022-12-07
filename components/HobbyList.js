@@ -1,6 +1,6 @@
 // Importerer React-elementer
 import React, {useEffect, useState} from 'react';
-import {Text, FlatList, TouchableOpacity, StyleSheet, View} from 'react-native';
+import {Text, FlatList, TouchableOpacity, StyleSheet, View, SafeAreaView, ScrollView} from 'react-native';
 
 // Importerer Firebase-elementer
 import firebase from 'firebase/compat';
@@ -41,8 +41,10 @@ export default function HobbyList({ navigation }) {
     // Returnerer view'et for Explore Events i form af hobbylisten
     return (
         // Returnerer view'et for events oprettet i applikationen
+        <SafeAreaView>
         <View>
             <View>
+                <Text style = { styles.header }>Event List</Text>
                 {/* Illusterer en søgebar, som dog endnu ikke funktionelt er implementeret */}
                 <SearchBar
                     placeholder = "Type Here..."
@@ -51,7 +53,7 @@ export default function HobbyList({ navigation }) {
                     lightTheme = 'false'
                 />
             </View>
-        <FlatList
+            <FlatList
             data = { hobbyArray }
             // Anvender hobbyKeys til at finde ID på den aktuelle hobby og returnerer dette som 'key', og
             // giver dette som ID til hobby-item
@@ -71,6 +73,7 @@ export default function HobbyList({ navigation }) {
             }}
         />
         </View>
+        </SafeAreaView>
     );
 }
 
@@ -81,8 +84,15 @@ const styles = StyleSheet.create({
         margin: 5,
         padding: 5,
         height: 70,
-        justifyContent:'center',
+        alignSelf:'center',
         backgroundColor: 'teal',
+        width: '96%'
     },
-    label: { fontWeight: 'bold' },
+        label: { fontWeight: 'bold' },
+    header: {
+        fontSize: 20,
+        fontWeight: "bold",
+        padding: 10,
+        alignSelf: 'center'
+    }
 });

@@ -1,14 +1,31 @@
 // Importerer React-elementer
-import React from 'react';
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, Text, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView} from 'react-native';
+import {SearchBar} from "react-native-elements";
+import firebase from "firebase/compat";
 
 // Opretter og eksporterer Profile-funktionen, som er ment til at  returnere view'et for den aktuelle bruger
 // ved ID-match i databasen. Eftersom brugerfunktionen endnu ikke er implementeret i applikationen, viser koden
 // et statisk eksempel på et layout
 export default function Profile({ navigation }) {
+    const [user, setUser] = useState({ loggedIn: false });
+    function onAuthStateChange(callback) {
+        return firebase.auth().onAuthStateChanged(user => {
+            if (user) {
+                callback({loggedIn: true, user: user});
+            } else {
+                callback({loggedIn: false});
+            }
+        });
+    }
+
     return(
+        <SafeAreaView>
+            <Text style = { styles.header }>FirstName LastName</Text>
+
+            <ScrollView>
         <View style = { styles.container }>
-            <Text style = { styles.name }>FirstName LastName</Text>
+
             {/* View til display af brugerinfo */}
             <View style = { styles.info }>
                 <Text style = { { alignItems: 'center' } }> -  Info...</Text>
@@ -41,6 +58,8 @@ export default function Profile({ navigation }) {
                 <Text style = { styles.buttonText }>Registered Events</Text>
             </TouchableOpacity>
         </View>
+            </ScrollView>
+        </SafeAreaView>
     )
 };
 
@@ -49,7 +68,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        margin: 5
+        margin: 5,
     },
     name: {
         fontSize: 20,
@@ -61,6 +80,12 @@ const styles = StyleSheet.create({
         fontSize: 15,
         fontWeight: "bold",
         paddingTop: 20
+    },
+    header: {
+        fontSize: 20,
+        fontWeight: "bold",
+        padding: 10,
+        alignSelf: 'center',
     },
     info: {
         width: '100%',

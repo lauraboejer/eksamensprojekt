@@ -72,7 +72,7 @@ export default function AddEditHobby ({ navigation, route }) {
     return (
         <SafeAreaView>
             <ScrollView>
-                <View style = {{alignItems: 'center'}}>
+                <View>
                     <Text style = { styles.header }>Add Event</Text>
                 </View>
                 {
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
     header: {
         fontSize: 20,
         fontWeight: "bold",
-        paddingTop: 10,
-        paddingBottom: 20,
+        padding: 10,
+        alignSelf: 'center',
     },
 });
