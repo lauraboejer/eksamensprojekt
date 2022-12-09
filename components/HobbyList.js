@@ -12,17 +12,21 @@ export default function HobbyList({ navigation }) {
     const [hobbies, setHobbies] = useState();
     const [search, updateSearch] = useState('');
     // Henter data fra databasen hvis hobbies ikke er hentet endnu
-    useEffect(() => {
-        if(!hobbies) {
-            firebase
-                .database()
-                .ref('/Hobbies')
-                // Henter data ved brug af '.on()'
-                .on('value', snapshot => {
-                    setHobbies(snapshot.val())
-                });
-        }
-    },[]);
+        useEffect(() => {
+            try {
+                if (!hobbies) {
+                    firebase
+                        .database()
+                        .ref('/Hobbies')
+                        // Henter data ved brug af '.on()'
+                        .on('value', snapshot => {
+                            setHobbies(snapshot.val())
+                        });
+                }
+            } catch (error) {
+                throw error;
+            }
+        }, []);
     //rReturnerer teksten, hvis der ikke findes nogle hobbyer i databasen
     if (!hobbies) {
         return <View style = { { justifyContent: 'center', flex: 1, alignItems: 'center' } }>
@@ -42,7 +46,7 @@ export default function HobbyList({ navigation }) {
     return (
         // Returnerer view'et for events oprettet i applikationen
         <SafeAreaView>
-        <View>
+        <View style={{height: '100%' }}>
             <View>
                 <Text style = { styles.header }>Event List</Text>
                 {/* Illusterer en søgebar, som dog endnu ikke funktionelt er implementeret */}
@@ -70,8 +74,7 @@ export default function HobbyList({ navigation }) {
                         <Text>{ item.date }</Text>
                     </TouchableOpacity>
                 )
-            }}
-        />
+            }}/>
         </View>
         </SafeAreaView>
     );

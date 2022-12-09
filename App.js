@@ -17,8 +17,9 @@ import Profile from "./components/Profile";
 import SavedHobbies from "./components/SavedHobbies";
 import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
+import EditInterests from "./components/EditInterests";
 // import EditProfile from "./components/EditProfile";
-// import RegisteredEvents from "./components/RegisteredHobbies";
+import RegisteredHobbies from "./components/RegisteredHobbies";
 
 // Importerer Firebase-elementer
 import firebase from "firebase/compat";
@@ -50,6 +51,8 @@ function ExploreEventsNavigator() {
         <Stack.Navigator>
             <Stack.Screen name = "Event List" component = { HobbyList }options={{headerShown: null}}/>
             <Stack.Screen name = "Event Details" component = { HobbyDetails }options={{headerShown: null}}/>
+            <Stack.Screen name = "Edit Event" component={ AddEditHobby } options={{headerShown: null}}/>
+            <Stack.Screen name = "Registered Events" component={RegisteredHobbies} options={{headerShown:null}}/>
         </Stack.Navigator>
     );
 }
@@ -59,6 +62,7 @@ function ProfileNavigator() {
     return(
         <Stack.Navigator>
             <Stack.Screen name = "Profile" component = { Profile }options={{headerShown: null}}/>
+            <Stack.Screen name = "Edit Interests" component = { EditInterests }/>
             {/*disse to screens er endnu ikke implementerede, hvorfor de er udkommenteret*/}
             {/*<Stack.Screen name = "Edit Profile" component = { EditProfile }/>*/}
             {/*<Stack.Screen name = "Registered Events" component = { RegisteredEvents }/>*/}
@@ -96,7 +100,7 @@ function LoggedIn() {
     return(
         <NavigationContainer>
             <Drawer.Navigator>
-                <Drawer.Screen name={"Explore Events"} component={TabNavigator} options = { { tabBarIcon: () => (
+                <Drawer.Screen name={"All Events"} component={TabNavigator} options = { { tabBarIcon: () => (
                         <Ionicons name = "globe" size = { 20 }/>), headerShown: true, headerTransparent: true, headerTitleStyle: {
                         color: 'transparent'
                     } } }/>

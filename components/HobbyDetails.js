@@ -1,84 +1,157 @@
 //importerer React-elementer
-import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, SafeAreaView, ScrollView} from 'react-native';
 import firebase from "firebase/compat";
-import {useRoute} from "@react-navigation/native";
+import React, {useEffect, useState} from 'react';
+import {View, Text, StyleSheet, TouchableOpacity, SafeAreaView, ScrollView, Alert} from 'react-native';
+import {useNavigation} from "@react-navigation/native";
 
 function LoggedIn({route}) {
+    const navigation = useNavigation()
+    const user = firebase.auth().currentUser.email
     const [hobby, setHobby] = useState({});
+    const hobbyId = route.params.hobby[0];
+
     useEffect(() => {
-        /*Henter car values og sætter dem*/
-        if (route.params.savedHobby) {
-            setHobby(route.params.savedHobby[1])
+            setHobby(route.params.hobby[1])
             /*Når vi forlader screen, tøm object*/
             return () => {
                 setHobby({})
             }
-        } else {
-            /*Henter car values og sætter dem*/
-            setHobby(route.params.hobby[1]);
-            /*Når vi forlader screen, tøm object*/
-            return () => {
-                setHobby({})
-            }
-        }
     });
+
+    console.log('registereret' + hobbyId)
+    function RegisterUser() {
+        try {
+             firebase
+                .database()
+                .ref(`/Hobbies/${hobbyId}/registrations/`)
+                .once('value', snapshot => {
+                    if (snapshot.exists() == false || snapshot.val() == null) {
+                        firebase
+                            .database()
+                            .ref(`/Hobbies/${hobbyId}/registrations/`)
+                            .push({user: user})
+                        Alert.alert('Registration successful!')
+                    } else {
+                        let i;
+                        for (i in Object.values(snapshot.val())) {
+
+                            if (Object.values(snapshot.val())[i].user == user) {
+                                console.log(user)
+                                console.log(Object.values(snapshot.val())[i].user == user)
+                                Alert.alert('You´re already registered')
+                            } else {
+                                firebase
+                                    .database()
+                                    .ref(`/Hobbies/${hobbyId}/registrations/`)
+                                    .push({user: user})
+                                Alert.alert('Registration successful!')
+                            }
+                        }
+                    }
+                })
+        } catch (error) {
+            throw error;
+        }
+    };
+
     if (!hobby) {
         return <Text>No data</Text>;
     } else {
-        const [register, setRegister] = useState(false);
-        function changeColor() {
-            if(!register) {
-                return(
-                    'firebrick'
-                );
-            } else {
-                return(
-                    'seagreen'
-                );
-            }
+        if (hobby.organizer === user) {
+            return (
+                <SafeAreaView>
+                    <Text style = { styles.header }>{hobby.name}</Text>
+                    <ScrollView>
+                        <View style={styles.container}>
+                            <View style={styles.row}>
+                                <Text style={styles.label}>Date</Text>
+                                {/*Vores car values navne */}
+                                <Text style={styles.value}>{hobby.date}</Text>
+                            </View>
+                            <View style={styles.row}>
+                                <Text style={styles.label}>Category</Text>
+                                {/*Vores car values navne */}
+                                <Text style={styles.value}>{hobby.category}</Text>
+                            </View>
+                            <View style={styles.row}>
+                                <Text style={styles.label}>Location</Text>
+                                {/*Vores car values navne */}
+                                <Text style={styles.value}>{hobby.location}</Text>
+                            </View>
+                            <View style={styles.row}>
+                                <Text style={styles.label}>Description</Text>
+                                {/*Vores car values navne */}
+                                <Text style={styles.value}>{hobby.description}</Text>
+                            </View>
+                            <View style={styles.row}>
+                                <Text style={styles.label}>Organizer</Text>
+                                {/*Vores car values navne */}
+                                <Text style={styles.value}>{hobby.organizer}</Text>
+                            </View>
+                            <TouchableOpacity onPress={() => navigation.navigate("Edit Event", {hobby, hobbyId})} style={{
+                                backgroundColor: 'seagreen',
+                                margin: 10,
+                                height: 40,
+                                borderRadius: 10,
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                width: 150
+                                }}>
+                                <Text style={styles.buttonText}>{"Edit event"}</Text>
+                            </TouchableOpacity>
+                        <View style={{padding: 10}}/>
+                        </View>
+                    </ScrollView>
+                </SafeAreaView>
+            )
+        } else {
+            return (
+                <SafeAreaView>
+                    <Text style = { styles.header }>{hobby.name}</Text>
+                    <ScrollView>
+                        <View style={styles.container}>
+                            <View style={styles.row}>
+                                <Text style={styles.label}>Date</Text>
+                                {/*Vores car values navne */}
+                                <Text style={styles.value}>{hobby.date}</Text>
+                            </View>
+                            <View style={styles.row}>
+                                <Text style={styles.label}>Category</Text>
+                                {/*Vores car values navne */}
+                                <Text style={styles.value}>{hobby.category}</Text>
+                            </View>
+                            <View style={styles.row}>
+                                <Text style={styles.label}>Location</Text>
+                                {/*Vores car values navne */}
+                                <Text style={styles.value}>{hobby.location}</Text>
+                            </View>
+                            <View style={styles.row}>
+                                <Text style={styles.label}>Description</Text>
+                                {/*Vores car values navne */}
+                                <Text style={styles.value}>{hobby.description}</Text>
+                            </View>
+                            <View style={styles.row}>
+                                <Text style={styles.label}>Organizer</Text>
+                                {/*Vores car values navne */}
+                                <Text style={styles.value}>{hobby.organizer}</Text>
+                            </View>
+                            <TouchableOpacity onPress={()=>{RegisterUser()}} style={{
+                                backgroundColor: 'seagreen',
+                                margin: 10,
+                                height: 40,
+                                borderRadius: 10,
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                width: 150
+                            }}>
+                                <Text style={styles.buttonText}>{ "Register"+"Unregister"}</Text>
+                            </TouchableOpacity>
+                            <View style={{padding: 10}}/>
+                        </View>
+                    </ScrollView>
+                </SafeAreaView>
+            )
         }
-        return (
-                <View style={styles.container}>
-                    <View style={styles.row}>
-                        <Text style={styles.label}>Name</Text>
-                        {/*Vores car values navne */}
-                        <Text style={styles.value}>{hobby.name}</Text>
-                    </View>
-                    <View style={styles.row}>
-                        <Text style={styles.label}>Date</Text>
-                        {/*Vores car values navne */}
-                        <Text style={styles.value}>{hobby.date}</Text>
-                    </View>
-                    <View style={styles.row}>
-                        <Text style={styles.label}>Category</Text>
-                        {/*Vores car values navne */}
-                        <Text style={styles.value}>{hobby.category}</Text>
-                    </View>
-                    <View style={styles.row}>
-                        <Text style={styles.label}>Location</Text>
-                        {/*Vores car values navne */}
-                        <Text style={styles.value}>{hobby.location}</Text>
-                    </View>
-                    <View style={styles.row}>
-                        <Text style={styles.label}>Description</Text>
-                        {/*Vores car values navne */}
-                        <Text style={styles.value}>{hobby.description}</Text>
-                    </View>
-                <TouchableOpacity onPress={() => setRegister(!register)} style={{
-                    backgroundColor: changeColor(),
-                    margin: 10,
-                    height: 40,
-                    borderRadius: 10,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: 150
-                }}>
-                    <Text style={styles.buttonText}>{register ? "Registered" : "Not Registered"}</Text>
-                </TouchableOpacity>
-                <View style={{padding: 10}}/>
-            </View>
-        );
     }
 };
 
@@ -188,6 +261,12 @@ const styles = StyleSheet.create({
         margin: 5,
         padding: 5,
         flexDirection: 'row',
+    },
+    header: {
+        fontSize: 20,
+        fontWeight: "bold",
+        padding: 10,
+        alignSelf: 'center',
     },
     label: {
         width: 100,

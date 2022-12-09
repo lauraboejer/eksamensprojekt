@@ -1,109 +1,127 @@
-// Importerer React-elementer
 import React, { useState, useEffect } from 'react';
-import { Text, TextInput, SafeAreaView, ScrollView, StyleSheet, View, Alert, TouchableOpacity } from 'react-native';
-
-// Importerer Firebase-elementer
+import {TouchableOpacity} from "react-native";
+import { Text, TextInput, SafeAreaView, ScrollView, StyleSheet, View, Button, Alert } from 'react-native';
 import firebase from 'firebase/compat';
 
-// Opretter og eksporterer AddEditHobby-funktionen, som returnerer views for både tilføj og rediger event
-// 'Rediger event' er endnu ikke implementeret i applikationen, men koden gør implementeringen let
 export default function AddEditHobby ({ navigation, route }) {
-    // deklarerer initialState, som angiver datastrukturen på et event-objekt
-    const initialState = {name: '', category: '', location: '', date: '', description: ''};
+    const organizer = firebase.auth().currentUser.email;
+    const initialState = {name: '', category: '', date: '', location: '', description: ''};
     const [newHobby, setNewHobby] = useState(initialState);
-
-    // Deklarerer isEditHobby-variablen, som kan bruges til at tilpasse view'et ved implementering af rediger event
-    const isEditHobby = route.name === "Edit Hobby";
-
-    /* Opretter useEffect-funktionen, som tjekker for isEditHobby-variablen og returnerer eventet
-    baseret på route-parametrene */
+    const isEditHobby = route.name === "Edit Event";
+    const [hobbyId, setHobbyId] = useState();
     useEffect(() => {
         if(isEditHobby) {
-            const hobby = route.params.hobby[1];
+            const hobby = route.params.hobby;
             setNewHobby(hobby)
+            const id = route.params.hobbyId;
+            setHobbyId(id)
         }
         return () => {
             setNewHobby(initialState)
         };
     }, []);
+    console.log(hobbyId)
+    const  handleDelete = () => {
+        try {
+            firebase
+                .database()
+                // Vi sætter bilens ID ind i stien
+                .ref(`/Hobbies/${hobbyId}`)
+                // Og fjerner data fra den sti
+                .remove()
+            // Og går tilbage når det er udført
+            navigation.navigate('Event List');
+        } catch (error) {
+            Alert.alert(error.message);
+        }
+    };
+    const confirmDelete = () => {
+        if(Platform.OS ==='ios' || Platform.OS ==='android'){
+            Alert.alert('Are you sure?', 'Do you want to delete this event?', [
+                { text: 'Cancel', style: 'cancel' },
+                // Vi bruger this.handleDelete som eventHandler til onPress
+                { text: 'Delete', style: 'destructive', onPress: () => handleDelete() },
+            ]);
+        }
+    };
+    function DeleteEvent() {
+        if (isEditHobby) {
+            return(
+                <TouchableOpacity style = { styles.button2 } onPress = { () => confirmDelete() }>
+                    <Text style = { styles.buttonText }>{"Delete event"}</Text>
+                </TouchableOpacity>
+            )
+        }
+    }
 
-    // Opretter changeTextInput-funktionen, som ændrer state på hobby ved et givent event
     const changeTextInput = (name, event) => {
         setNewHobby({...newHobby, [name]: event});
     };
-
-    // Opretter handleSave-funktionen, som opdaterer databasen ved enten oprettelse eller redigering af et event
     const handleSave = () => {
-        const { name, category, location, date, description } = newHobby;
-        if(name.length === 0 || category.length === 0 || location.length === 0 || date.length === 0 || description.length === 0 ) {
+        const { name, category, date, location, description} = newHobby;
+        if(name.length === 0 || category.length === 0 || date.length === 0 || location.length === 0 || description.length === 0) {
             return Alert.alert('Et af felterne er tomme!');
-        }
-        // Tjekker om der er tale om en redigering af et eksisterende event og opdaterer databasen med ny info
-        if(isEditHobby) {
-            const id = route.params.hobby[0];
+        } if(isEditHobby) {
             try {
                 firebase
                     .database()
-                    .ref(`/Hobbies/${id}`)
-                    // Gør brug af update, så kun de felter der ændres opdateres i databasen
-                    .update({ name, category, location, date, description });
-                Alert.alert("Hobby-info er nu opdateret");
-                const hobby = [id,newHobby]
-                // Navigerer tilbage til eventets detaljer for at vise ændringerne
-                navigation.navigate("Hobby Details",{hobby});
+                    .ref(`/Hobbies/${hobbyId}`)
+                    // Vi bruger update, så kun de felter vi angiver, bliver ændret
+                    .update({ name, category, date, location, description})
+                    .then();
+                // Når bilen er ændret, går vi tilbage.
+                Alert.alert("Your event has been updated");
+                const hobby = [hobbyId,newHobby]
+                navigation.navigate("Event Details",{hobby});
             } catch (error) {
                 console.log(`Error: ${error.message}`);
-            }// Håndterer oprettelse af et nyt event, hvis der ikke er tale om et eksisterende event
+            }
         } else {
             try {
                 firebase
                     .database()
                     .ref('/Hobbies/')
-                    // Gør brug af push for at oprette et nyt objekt i databasen
-                    .push({ name, category, location, date, description });
+                    .push({ name, category, date, location, description, organizer});
                 Alert.alert(`Saved`);
-                setNewHobby(initialState)
+                const hobby = [hobbyId, newHobby]
+                navigation.navigate("Event List", {hobby})
+                return setNewHobby(initialState)
             } catch (error) {
                 console.log(`Error: ${ error.message }`);
-            }
-        }
+            };
+        };
     };
-    // Returnerer view'et for redigering/oprettelse af event
     return (
         <SafeAreaView>
             <ScrollView>
-                <View>
-                    <Text style = { styles.header }>Add Event</Text>
-                </View>
+                <Text style = { styles.header }>{isEditHobby ? "Edit event" : "Add event"}</Text>
                 {
                     Object.keys(initialState).map((key, index) => {
                         return (
                             <View style = { styles.row } key = { index }>
-                                {/* Viser objekt-keys baseret på initialState-variablen*/}
                                 <Text style = { styles.label }>{ key }</Text>
-                                {/* Definerer tekstinput, som indeholder information, hvis der er tale om redigering */}
                                 <TextInput
-                                    value = { newHobby[key] }
+                                    value = {newHobby[key]}
                                     onChangeText = { (event) => changeTextInput(key, event) }
                                     style = { styles.input }
                                 />
                             </View>
-                        );
+                        )
                     })
                 }
                 <View style = { { justifyContent: 'center', alignItems: 'center', paddingTop: 20 } }>
                     {/* TouchableOpacity fungerer som en knap, hvis tekst ændrer sig alt efter,
                     om der er tale om oprettelse eller redigering */}
-                    <TouchableOpacity style = { styles.button } onPress = { () => handleSave() }>
-                        <Text style = { styles.buttonText }>{ isEditHobby ? "Save Changes" : "Add Hobby" }</Text>
+                    <TouchableOpacity style = { styles.button1 } onPress = { () => handleSave() }>
+                        <Text style = { styles.buttonText }>{ isEditHobby ? "Save changes" : "Add event" }</Text>
                     </TouchableOpacity>
+                    <DeleteEvent/>
                 </View>
-            </ScrollView>
+                </ScrollView>
         </SafeAreaView>
     )
 };
 
-// Opretter stylesheet
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -126,10 +144,19 @@ const styles = StyleSheet.create({
         padding:5,
         flex: 1,
     },
-    button: {
+    button1: {
         margin: 10,
         height: 40,
-        backgroundColor: 'cornflowerblue',
+        backgroundColor: 'seagreen',
+        borderRadius: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: 150
+    },
+    button2: {
+        margin: 10,
+        height: 40,
+        backgroundColor: 'firebrick',
         borderRadius: 10,
         alignItems: 'center',
         justifyContent: 'center',

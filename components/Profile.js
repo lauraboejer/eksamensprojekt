@@ -8,40 +8,79 @@ import firebase from "firebase/compat";
 // ved ID-match i databasen. Eftersom brugerfunktionen endnu ikke er implementeret i applikationen, viser koden
 // et statisk eksempel på et layout
 export default function Profile({ navigation }) {
-    const [user, setUser] = useState({ loggedIn: false });
-    function onAuthStateChange(callback) {
-        return firebase.auth().onAuthStateChanged(user => {
-            if (user) {
-                callback({loggedIn: true, user: user});
-            } else {
-                callback({loggedIn: false});
-            }
-        });
+    const email = firebase.auth().currentUser.email
+    const [profile, setProfile] = useState();
+    const [id, setId] = useState();
+    // Henter data fra databasen hvis hobbies ikke er hentet endnu
+    useEffect(() => {
+        try {
+            if (!profile) {
+                firebase
+                    .database()
+                    .ref(`/Profiles/`)
+                    .orderByChild('email')
+                    .on('value', snapshot => {
+                        snapshot.forEach(function (profileSnapshot) {
+                            if (profileSnapshot.val().email.toLowerCase() === email) {
+                                setProfile(profileSnapshot.val())
+                                setId(profileSnapshot.key)
+                                return;
+                            }
+                        })
+                    })
+            };
+        } catch (error) {
+            throw error;
+        }
+    }, []);
+
+    if (!profile) {
+        return <View style = { { justifyContent: 'center', flex: 1, alignItems: 'center' } }>
+            <Text>Looking for profile details...</Text>
+        </View>
     }
-
-    return(
+    const interests = Object.values(profile.selected)
+    function ShowInterests () {
+        return interests.map(item => {
+            return <Text style={styles.value}>{item}</Text>
+        })
+    }
+    return (
         <SafeAreaView>
-            <Text style = { styles.header }>FirstName LastName</Text>
-
+            <Text style = { styles.header }>{profile.firstName + ' ' + profile.lastName}</Text>
             <ScrollView>
         <View style = { styles.container }>
-
             {/* View til display af brugerinfo */}
             <View style = { styles.info }>
-                <Text style = { { alignItems: 'center' } }> -  Info...</Text>
-                <Text style = { { alignItems: 'center' } }> -  Info...</Text>
-                <Text style = { { alignItems: 'center' } }> -  Info...</Text>
+                <View style={styles.row}>
+                    <Text style={styles.label}>E-mail</Text>
+                        {/*Vores car values navne */}
+                    <Text style={styles.value}>{profile.email}</Text>
+                </View>
+                <View style={styles.row}>
+                    <Text style={styles.label}>Location</Text>
+                    {/*Vores car values navne */}
+                    <Text style={styles.value}>{profile.location}</Text>
+                </View>
+                <View style={styles.row}>
+                    <Text style={styles.label}>Gender</Text>
+                {/*Vores car values navne */}
+                    <Text style={styles.value}>{profile.gender}</Text>
+                </View>
+                <View style={styles.row}>
+                    <Text style={styles.label}>Birthdate</Text>
+                    {/*Vores car values navne */}
+                    <Text style={styles.value}>{profile.birthdate}</Text>
+                </View>
             </View>
             <Text style = { styles.interestText }>Interests</Text>
             {/* View til display af brugerens valgte interesser */}
             <View style = { styles.interests }>
-                <Text style = { { alignItems: 'center' } }>Skiing</Text>
-                <Text style = { { alignItems: 'center' } }>Knitting</Text>
-                <Text style = { { alignItems: 'center' } }>Soccer</Text>
+                <ShowInterests/>
                 {/* Returnerer knap for redigering af interesser. Eftersom funktionaliteten endnu ikke er
                 implementeret, er der sat en navigaitonsreference til 'Edit Interests', men da denne ikke
                 eksisterer endnu, sker der intet ved OnPress() */}
-                <TouchableOpacity style = { styles.button1 } onPress = { () => navigation.navigate('Edit Interests')}>
+                <TouchableOpacity style = { styles.button1 } onPress = { () => navigation.navigate('Edit Interests', {interests, id})}>
                     <Text style = { styles.buttonText }>Edit Interests</Text>
                 </TouchableOpacity>
             </View>
@@ -92,7 +131,7 @@ const styles = StyleSheet.create({
         borderRadius:10,
         margin: 5,
         padding: 5,
-        height: 200,
+        height: 'auto',
         backgroundColor: 'lightgrey'
     },
     interests: {
@@ -127,5 +166,15 @@ const styles = StyleSheet.create({
     buttonText: {
         fontWeight: "bold",
         fontSize: 12
-    }
+    },
+    row: {
+        margin: 5,
+        padding: 5,
+        flexDirection: 'row',
+    },
+    label: {
+        width: 100,
+        fontWeight: 'bold'
+    },
+    value: { flex: 1 },
 });
