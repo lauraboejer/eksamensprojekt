@@ -8,14 +8,13 @@ import {SearchBar} from "react-native-elements";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 // Opretter og eksporterer HobbyList-funktionen, som returnerer view'et i form af en liste af hobbyer fra databasen
-export default function RegisteredHobbies({ navigation }) {
+export default function OrganizedHobbies({ navigation }) {
     const email = firebase.auth().currentUser.email;
     const [search, updateSearch] = useState('');
     const [hobbies, setHobbies] = useState();
     const hobbyArray = [];
     const hobbyKeys = [];
-
-    useEffect(()=>{
+    useEffect(() => {
         try {
             firebase
                 .database()
@@ -31,26 +30,19 @@ export default function RegisteredHobbies({ navigation }) {
     if (!hobbies) {
         return (
             <View>
-                <Text>Looking for registered events..</Text>
+                <Text>Looking for your organized events..</Text>
             </View>
         );
     } else {
         function GetHobbies() {
-            return (
+            return(
                 hobbies.forEach(function(data) {
                     //console.log( data.key)
                     data.forEach(function(hobby){
-                        //console.log(hobby.key)
-                        hobby.forEach(function(reg){
-                            //console.log(reg.key)
-                            reg.forEach(function(user){
-                                user.toString()
-                                if(user.val() === email) {
-                                    hobbyArray.push(data.val())
-                                    hobbyKeys.push(data.key)
-                                }
-                            });
-                        });
+                        if(hobby.val().toString() === email) {
+                            hobbyArray.push(data.val())
+                            hobbyKeys.push(data.key)
+                        }
                     });
                 })
             );
@@ -68,7 +60,7 @@ export default function RegisteredHobbies({ navigation }) {
             <SafeAreaView>
                 <View style = {{ height: '100%' }}>
                     <View>
-                        <Text style = { styles.header }>Registered Events</Text>
+                        <Text style = { styles.header }>Organized Events</Text>
                         <SearchBar
                             placeholder = "Type Here..."
                             onChangeText = { updateSearch }
@@ -82,10 +74,10 @@ export default function RegisteredHobbies({ navigation }) {
                         renderItem = { ({item, index }) => {
                             return (
                                 <View style = { styles.row }>
-                                    <TouchableOpacity style = { styles.container } onPress = { () => handleSelectHobby(hobbyKeys[index], item) }>
+                                    <TouchableOpacity style = { styles.container } onPress={() => handleSelectHobby(hobbyKeys[index], item) }>
                                         <Text style = {{ fontWeight: 'bold' }}>{ item.name }</Text>
                                         <TouchableOpacity style = {{ alignItems: 'flex-end' }} onPress = { () => {} }>
-                                            <Ionicons name = "heart-outline" size = { 25 }/>
+                                            <Ionicons name="heart-outline" size={25}/>
                                         </TouchableOpacity>
                                         <Text>{ item.date }</Text>
                                     </TouchableOpacity>

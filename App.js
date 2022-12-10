@@ -18,8 +18,9 @@ import SavedHobbies from "./components/SavedHobbies";
 import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
 import EditInterests from "./components/EditInterests";
-// import EditProfile from "./components/EditProfile";
+import EditProfile from "./components/EditProfile";
 import RegisteredHobbies from "./components/RegisteredHobbies";
+import OrganizedHobbies from "./components/OrganizedEvents";
 
 // Importerer Firebase-elementer
 import firebase from "firebase/compat";
@@ -49,10 +50,29 @@ const Drawer = runOnJS(createDrawerNavigator());
 function ExploreEventsNavigator() {
     return(
         <Stack.Navigator>
-            <Stack.Screen name = "Event List" component = { HobbyList }options={{headerShown: null}}/>
-            <Stack.Screen name = "Event Details" component = { HobbyDetails }options={{headerShown: null}}/>
-            <Stack.Screen name = "Edit Event" component={ AddEditHobby } options={{headerShown: null}}/>
-            <Stack.Screen name = "Registered Events" component={RegisteredHobbies} options={{headerShown:null}}/>
+            <Stack.Screen name = "Event List" component = { HobbyList } options = {{ headerShown: null }}/>
+            <Stack.Screen name = "Event Details" component = { HobbyDetails } options = {{ headerShown: null }}/>
+            <Stack.Screen name = "Edit Event" component = { AddEditHobby } options = {{ headerShown: null }}/>
+        </Stack.Navigator>
+    );
+}
+
+function RegisteredEventsNavigator() {
+    return(
+        <Stack.Navigator>
+            <Stack.Screen name = "Event List" component = { RegisteredHobbies } options = {{ headerShown: null }}/>
+            <Stack.Screen name = "Event Details" component = { HobbyDetails } options = {{ headerShown: null }}/>
+        </Stack.Navigator>
+    );
+}
+
+// Opretter SavedEventsNavigator-funktion, som returnerer stack-screens for liste af gemte events og event-detaljer
+function OrganizedEventsNavigator() {
+    return(
+        <Stack.Navigator>
+            <Stack.Screen name = "Events List" component = { OrganizedHobbies } options = {{ headerShown: null }}/>
+            <Stack.Screen name = "Event Details" component = { HobbyDetails } options = {{ headerShown: null }}/>
+            <Stack.Screen name = "Edit Event" component = { AddEditHobby } options = {{ headerShown: null }}/>
         </Stack.Navigator>
     );
 }
@@ -61,21 +81,11 @@ function ExploreEventsNavigator() {
 function ProfileNavigator() {
     return(
         <Stack.Navigator>
-            <Stack.Screen name = "Profile" component = { Profile }options={{headerShown: null}}/>
-            <Stack.Screen name = "Edit Interests" component = { EditInterests }/>
+            <Stack.Screen name = "Profile" component = { Profile } options = {{headerShown: null }}/>
+            <Stack.Screen name = "Edit Interests" component = { EditInterests } options = {{ headerShown: null }}/>
             {/*disse to screens er endnu ikke implementerede, hvorfor de er udkommenteret*/}
-            {/*<Stack.Screen name = "Edit Profile" component = { EditProfile }/>*/}
-            {/*<Stack.Screen name = "Registered Events" component = { RegisteredEvents }/>*/}
-        </Stack.Navigator>
-    );
-}
-
-// Opretter SavedEventsNavigator-funktion, som returnerer stack-screens for liste af gemte events og event-detaljer
-function SavedEventsNavigator() {
-    return(
-        <Stack.Navigator>
-            <Stack.Screen name = "My Saved Events" component = { SavedHobbies } options={{headerShown: null}}/>
-            <Stack.Screen name = "Saved Event Details" component = { HobbyDetails} options={{headerShown: null}}/>
+            <Stack.Screen name = "Edit Profile" component = { EditProfile } options = {{ headerShown: null }}/>
+            <Stack.Screen name = "Organized Events" component = { OrganizedEventsNavigator } options = {{ headerShown: null }}/>
         </Stack.Navigator>
     );
 }
@@ -83,14 +93,28 @@ function SavedEventsNavigator() {
 function TabNavigator() {
     return(
         <Tab.Navigator>
-            <Tab.Screen name = "Explore Events" component = { ExploreEventsNavigator } options = { { tabBarIcon: () => (
-                    <Ionicons name = "globe" size = { 20 }/>), headerShown: null } }/>
-            <Tab.Screen name = "Saved Events" component = { SavedEventsNavigator } options = { { tabBarIcon: () => (
-                    <Ionicons name = "heart" size = { 20 }/>), headerShown: null } }/>
-            <Tab.Screen name = "My Profile" component = { ProfileNavigator } options = { { tabBarIcon: () => (
-                    <Ionicons name = "person" size = { 20 }/>), headerShown: null } }/>
-            <Tab.Screen name = "Add Event" component = { AddEditHobby } options = { { tabBarIcon: () => (
-                    <Ionicons name = "add" size = { 20 }/>), headerShown: null } }/>
+            <Tab.Screen name = "Explore Events" component = { ExploreEventsNavigator }
+                        options = {{
+                            tabBarIcon: () => (
+                                <Ionicons name = "globe" size = { 20 }/>),
+                            headerShown: null
+                        }}
+            />
+            <Tab.Screen name = "Registered Events" component = { RegisteredEventsNavigator } options = {{
+                tabBarIcon: () => (
+                    <Ionicons name = "heart" size = { 20 }/>),
+                headerShown: null
+            }}/>
+            <Tab.Screen name = "My Profile" component = { ProfileNavigator } options = {{
+                tabBarIcon: () => (
+                    <Ionicons name = "person" size = { 20 }/>),
+                headerShown: null
+            }}/>
+            <Tab.Screen name = "Add Event" component = { AddEditHobby } options = {{
+                tabBarIcon: () => (
+                    <Ionicons name = "add" size = { 20 }/>),
+                headerShown: null
+            }}/>
         </Tab.Navigator>
     )
 }
@@ -100,10 +124,15 @@ function LoggedIn() {
     return(
         <NavigationContainer>
             <Drawer.Navigator>
-                <Drawer.Screen name={"All Events"} component={TabNavigator} options = { { tabBarIcon: () => (
-                        <Ionicons name = "globe" size = { 20 }/>), headerShown: true, headerTransparent: true, headerTitleStyle: {
-                        color: 'transparent'
-                    } } }/>
+                <Drawer.Screen name = { "All Events" } component = { TabNavigator } options = {{
+                    headerShown: true, headerTransparent: true, headerTitleStyle: { color: 'transparent' }
+                }}/>
+                <Drawer.Screen name = { "My Profile" } component = { ProfileNavigator } options = {{
+                    headerShown: true, headerTransparent: true, headerTitleStyle: { color: 'transparent' }
+                }}/>
+                <Drawer.Screen name = { "My Registered Events" } component = { RegisteredEventsNavigator } options = {{
+                    headerShown: true, headerTransparent: true, headerTitleStyle: { color: 'transparent' }
+                }}/>
             </Drawer.Navigator>
         </NavigationContainer>
     );
@@ -113,12 +142,16 @@ function GuestPage() {
     return (
         <NavigationContainer>
             <Tab.Navigator>
-                <Tab.Screen name = "Explore Events" component = { ExploreEventsNavigator } options = { { tabBarIcon: () => (
-                        <Ionicons name = "globe" size = { 20 }/>), headerShown: false } }/>
+                <Tab.Screen name = "Explore Events" component = { ExploreEventsNavigator } options = {{
+                    tabBarIcon: () => (
+                        <Ionicons name = "globe" size = { 20 }/>), headerShown: false
+                }}/>
                 <Tab.Screen name={ "Sign In"} component={SignIn}options = { { tabBarIcon: () => (
-                        <Ionicons name = "globe" size = { 20 }/>), headerShown: null } }/>
+                    <Ionicons name = "globe" size = { 20 }/>), headerShown: null
+                }}/>
                 <Tab.Screen name={"Sign Up"} component={SignUp}options = { { tabBarIcon: () => (
-                        <Ionicons name = "globe" size = { 20 }/>), headerShown: null } }/>
+                    <Ionicons name = "globe" size = { 20 }/>), headerShown: null
+                }}/>
             </Tab.Navigator>
         </NavigationContainer>
     )
@@ -128,15 +161,16 @@ export default function App() {
     //Definerer bruger konstanter der har staten ikke logget ind
     const [user, setUser] = useState({ loggedIn: false });
     function onAuthStateChange(callback) {
-        return firebase.auth().onAuthStateChanged(user => {
-            if (user) {
-                callback({loggedIn: true, user: user});
-            } else {
-                callback({loggedIn: false});
-            }
-        });
+        return (
+            firebase.auth().onAuthStateChanged(user => {
+                if (user) {
+                    callback({ loggedIn: true, user: user });
+                } else {
+                    callback({ loggedIn: false });
+                }
+            })
+        )
     }
-
     //funktion der træder i kræft med det samme siden loader
     useEffect(() => {
         const unsubscribe = onAuthStateChange(setUser);
@@ -147,7 +181,7 @@ export default function App() {
 
     //Tjekker om brugerens status er ændret til at være logged ind
     //Hvis brugerens status er ændret kommer brugeren ind til HomeScreen, hvis ikke bliver de på guestPage
-    return(
+    return (
         user.loggedIn
             ? LoggedIn()
             : GuestPage()

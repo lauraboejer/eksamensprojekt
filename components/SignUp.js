@@ -5,8 +5,7 @@ import { initializeApp } from "firebase/app";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import {MultiSelect} from "react-native-element-dropdown";
 
-export default function SignUpForm({navigation}) {
-    //Instantiering af state-variabler, der skal benyttes i SignUpForm
+export default function SignUpForm({ navigation }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [location, setLocation] = useState('');
@@ -24,133 +23,133 @@ export default function SignUpForm({navigation}) {
             {label: 'Outdoors', value: 'Outdoors'},
             {label: 'Gastronomy', value: 'Gastronomy'},
         ];
+
         return(
-                <MultiSelect
-                    style={dropdownStyles.dropdown}
-                    placeholderStyle={dropdownStyles.placeholderStyle}
-                    selectedTextStyle={dropdownStyles.selectedTextStyle}
-                    inputSearchStyle={dropdownStyles.inputSearchStyle}
-                    iconStyle={dropdownStyles.iconStyle}
-                    data={interests}
-                    labelField="label"
-                    valueField="value"
-                    placeholder="Multi Select item"
-                    value={selected}
-                    search
-                    searchPlaceholder="Search..."
-                    onChange={ (item) => {
-                        setSelected(item);
-                    }}
-                    renderItem = { (item) => {
-                        return (
-                            <View style={dropdownStyles.item}>
-                                <Text style={dropdownStyles.selectedTextStyle}>{item.label}</Text>
-                            </View>
-                        );
-                    }}
-                    renderSelectedItem={(item, unSelect) => (
-                        <TouchableOpacity onPress={() => unSelect && unSelect(item)}>
-                            <View style={dropdownStyles.selectedStyle}>
-                                <Text style={dropdownStyles.textSelectedStyle}>{item.label}</Text>
-                                <Ionicons color="black" name="trash" size={17} />
-                            </View>
-                        </TouchableOpacity>
-                    )}
-                />
-        )
+            <MultiSelect
+                style = { dropdownStyles.dropdown }
+                placeholderStyle = { dropdownStyles.placeholderStyle }
+                selectedTextStyle = { dropdownStyles.selectedTextStyle }
+                inputSearchStyle = { dropdownStyles.inputSearchStyle }
+                iconStyle = { dropdownStyles.iconStyle }
+                data = { interests }
+                labelField = "label"
+                valueField = "value"
+                placeholder = "Choose interests"
+                value = {selected}
+                search
+                searchPlaceholder = "Search..."
+                onChange = { (item) => {
+                    setSelected(item);
+                }}
+                renderItem = { (item) => {
+                    return (
+                        <View style = { dropdownStyles.item }>
+                            <Text style = { dropdownStyles.selectedTextStyle }>{ item.label }</Text>
+                        </View>
+                    );
+                }}
+                renderSelectedItem= { (item, unSelect) => (
+                    <TouchableOpacity onPress = { () => unSelect && unSelect(item) }>
+                        <View style = { dropdownStyles.selectedStyle }>
+                            <Text style = { dropdownStyles.textSelectedStyle }>{ item.label }</Text>
+                            <Ionicons color = "black" name = "trash" size = { 17 }/>
+                        </View>
+                    </TouchableOpacity>
+                )}
+            />
+        );
     }
+
     const handleData = async() => {
         try {
             firebase
-            .database()
+                .database()
                 .ref('/Profiles/')
                 .push({email, firstName, lastName, location, birthdate, gender, selected});
-            console.log(email, firstName, lastName, location, birthdate, gender, selected)
         } catch (error) {
-            console.log(error.message)
+            console.log(error.message);
         }
     };
 
     const handleSubmit = async() => {
         try {
-            await firebase.auth().createUserWithEmailAndPassword(email, password).then((data)=>{
-                handleData({email, firstName, lastName, location, birthdate, gender, selected})
+            await
+                firebase
+                    .auth()
+                    .createUserWithEmailAndPassword(email, password)
+                    .then((data) => {
+                        handleData({ email, firstName, lastName, location, birthdate, gender, selected })
             });
-        } catch (error){
+        } catch (error) {
             setErrorMessage(error.message)
         }
-
-    }
-
-//I return oprettes en tekstkomponent, der angiver at dette er SignUpfrom
-//Dernæst er der to inputfelter, som løbeende sætter værdien af state-variablerne, mail og password.
-// Afslutningsvis, angives det at, hvis errorMessage får fastsat en værdi, skal denne udskrives i en tekstkomponent.
+    };
 
     return (
         <SafeAreaView>
             <ScrollView>
-            <View>
-                <Text style = { styles.header }>Sign Up</Text>
-            </View>
-            <TextInput
-                placeholder="First name"
-                value={firstName}
-                onChangeText={(firstName) => setFirstName(firstName)}
-                style={styles.input}
-            />
-            <TextInput
-                placeholder="Last name"
-                value={lastName}
-                onChangeText={(lastName) => setLastName(lastName)}
-                style={styles.input}
+                <View>
+                    <Text style = { styles.header }>Sign Up</Text>
+                </View>
+                <TextInput
+                    placeholder = "First name"
+                    value = { firstName }
+                    onChangeText = { (firstName) => setFirstName(firstName) }
+                    style = { styles.input }
+                />
+                <TextInput
+                    placeholder = "Last name"
+                    value = { lastName }
+                    onChangeText = { (lastName) => setLastName(lastName) }
+                    style = { styles.input }
 
-            />
-            <TextInput
-                placeholder="Gender"
-                value={gender}
-                onChangeText={(gender) => setGender(gender)}
-                style={styles.input}
-            />
-            <TextInput
-                placeholder="Birthdate"
-                value={birthdate}
-                onChangeText={(birthdate) => setBirthdate(birthdate)}
-                style={styles.input}
-            />
-            <TextInput
-                placeholder="Location"
-                value={location}
-                onChangeText={(location) => setLocation(location)}
-                style={styles.input}
-            />
-            <Dropdown/>
-            <TextInput
-                placeholder="E-mail"
-                value={email}
-                onChangeText={(email) => setEmail(email)}
-                style={styles.input}
-            />
-            <TextInput
-                placeholder="Password"
-                value={password}
-                onChangeText={(password) => setPassword(password)}
-                secureTextEntry
-                style={styles.input}
-            />
-            {errorMessage && (
-                <Text style={styles.error}>Error: {errorMessage}</Text>
-            )}
-            <TouchableOpacity onPress={() => handleSubmit()} style={styles.button1}>
-                <Text style = { styles.buttonText }>{"Sign Up"}</Text>
-            </TouchableOpacity>
-            <Text style={{alignSelf: 'center', paddingTop: 20}}>Already have an account?</Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Sign In')} style={styles.button2}>
-                <Text style={styles.buttonText}>{"Sign in now!"}</Text>
-            </TouchableOpacity>
+                />
+                <TextInput
+                    placeholder = "Gender"
+                    value = { gender }
+                    onChangeText = { (gender) => setGender(gender) }
+                    style = { styles.input }
+                />
+                <TextInput
+                    placeholder = "Birthdate"
+                    value = { birthdate }
+                    onChangeText = { (birthdate) => setBirthdate(birthdate) }
+                    style = { styles.input }
+                />
+                <TextInput
+                    placeholder = "Location"
+                    value = { location }
+                    onChangeText = { (location) => setLocation(location) }
+                    style = { styles.input }
+                />
+                <Dropdown/>
+                <TextInput
+                    placeholder = "E-mail"
+                    value = { email }
+                    onChangeText = { (email) => setEmail(email) }
+                    style = { styles.input }
+                />
+                <TextInput
+                    placeholder = "Password"
+                    value = {password}
+                    onChangeText = { (password) => setPassword(password) }
+                    secureTextEntry
+                    style = { styles.input }
+                />
+                { errorMessage && (
+                    <Text style = { styles.error }>Error: { errorMessage }</Text>
+                )}
+                <TouchableOpacity onPress = { () => handleSubmit() } style = { styles.button1 }>
+                    <Text style = { styles.buttonText }>Sign Up</Text>
+                </TouchableOpacity>
+                <Text style = {{ alignSelf: 'center', paddingTop: 20 }}>Already have an account?</Text>
+                <TouchableOpacity onPress = { () => navigation.navigate('Sign In') } style = { styles.button2 }>
+                    <Text style = { styles.buttonText }>Sign in now!</Text>
+                </TouchableOpacity>
             </ScrollView>
         </SafeAreaView>
     );
-}
+};
 
 //Lokal styling til brug i SignUpForm
 const styles = StyleSheet.create({
@@ -162,7 +161,6 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         padding: 10,
         alignSelf: 'center',
-        paddingTop: 55
     },
     label: {
         fontWeight: 'bold',

@@ -1,17 +1,14 @@
 // Importerer React-elementer
 import React, {useEffect, useState} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView} from 'react-native';
-import {SearchBar} from "react-native-elements";
 import firebase from "firebase/compat";
 
-// Opretter og eksporterer Profile-funktionen, som er ment til at  returnere view'et for den aktuelle bruger
-// ved ID-match i databasen. Eftersom brugerfunktionen endnu ikke er implementeret i applikationen, viser koden
-// et statisk eksempel på et layout
 export default function Profile({ navigation }) {
     const email = firebase.auth().currentUser.email
     const [profile, setProfile] = useState();
     const [id, setId] = useState();
-    // Henter data fra databasen hvis hobbies ikke er hentet endnu
+    const [errorMessage, setErrorMessage] = useState(null);
+
     useEffect(() => {
         try {
             if (!profile) {
@@ -26,75 +23,80 @@ export default function Profile({ navigation }) {
                                 setId(profileSnapshot.key)
                                 return;
                             }
-                        })
-                    })
-            };
+                        });
+                    });
+            }
         } catch (error) {
             throw error;
         }
     }, []);
 
     if (!profile) {
-        return <View style = { { justifyContent: 'center', flex: 1, alignItems: 'center' } }>
-            <Text>Looking for profile details...</Text>
-        </View>
+        return (
+            <View style = { { justifyContent: 'center', flex: 1, alignItems: 'center' } }>
+                <Text>Looking for profile details...</Text>
+            </View>
+        );
     }
+
     const interests = Object.values(profile.selected)
+
     function ShowInterests () {
         return interests.map(item => {
-            return <Text style={styles.value}>{item}</Text>
-        })
+            return (
+                <Text style = { styles.value }>{ item }</Text>
+            );
+        });
     }
+
+    const handleSubmit = async () => {
+        try {
+            // prædefineret Firebase-funktion
+            await firebase.auth().signOut();
+            navigation.goBack();
+        } catch (error){
+            setErrorMessage(error.message)
+        }
+    }
+
     return (
         <SafeAreaView>
-            <Text style = { styles.header }>{profile.firstName + ' ' + profile.lastName}</Text>
+            <Text style = { styles.header }>{ profile.firstName + ' ' + profile.lastName }</Text>
             <ScrollView>
         <View style = { styles.container }>
-            {/* View til display af brugerinfo */}
             <View style = { styles.info }>
-                <View style={styles.row}>
-                    <Text style={styles.label}>E-mail</Text>
-                        {/*Vores car values navne */}
-                    <Text style={styles.value}>{profile.email}</Text>
+                <View style = { styles.row }>
+                    <Text style = { styles.label }>E-mail</Text>
+                    <Text style = { styles.value }>{ profile.email }</Text>
                 </View>
-                <View style={styles.row}>
-                    <Text style={styles.label}>Location</Text>
-                    {/*Vores car values navne */}
-                    <Text style={styles.value}>{profile.location}</Text>
+                <View style = { styles.row }>
+                    <Text style = { styles.label }>Location</Text>
+                    <Text style = { styles.value }>{ profile.location }</Text>
                 </View>
-                <View style={styles.row}>
-                    <Text style={styles.label}>Gender</Text>
-                {/*Vores car values navne */}
-                    <Text style={styles.value}>{profile.gender}</Text>
+                <View style = { styles.row }>
+                    <Text style = { styles.label }>Gender</Text>
+                    <Text style = { styles.value }>{ profile.gender }</Text>
                 </View>
-                <View style={styles.row}>
-                    <Text style={styles.label}>Birthdate</Text>
-                    {/*Vores car values navne */}
-                    <Text style={styles.value}>{profile.birthdate}</Text>
+                <View style = { styles.row }>
+                    <Text style = { styles.label }>Birthdate</Text>
+                    <Text style = { styles.value }>{ profile.birthdate }</Text>
                 </View>
+                <TouchableOpacity style = { styles.button2 } onPress = { () => navigation.navigate('Edit Profile', { id, profile }) }>
+                    <Text style = { styles.buttonText }>Edit Profile</Text>
+                </TouchableOpacity>
             </View>
             <Text style = { styles.interestText }>Interests</Text>
-            {/* View til display af brugerens valgte interesser */}
             <View style = { styles.interests }>
                 <ShowInterests/>
-                {/* Returnerer knap for redigering af interesser. Eftersom funktionaliteten endnu ikke er
-                implementeret, er der sat en navigaitonsreference til 'Edit Interests', men da denne ikke
-                eksisterer endnu, sker der intet ved OnPress() */}
-                <TouchableOpacity style = { styles.button1 } onPress = { () => navigation.navigate('Edit Interests', {interests, id})}>
+                <TouchableOpacity style = { styles.button1 } onPress = { () => navigation.navigate('Edit Interests', { interests, id }) }>
                     <Text style = { styles.buttonText }>Edit Interests</Text>
                 </TouchableOpacity>
             </View>
-            {/* Returnerer knap for redigering af profilen. Eftersom funktionaliteten endnu ikke er
-                implementeret, er der sat en navigaitonsreference til 'Edit Profile', men da denne ikke
-                eksisterer endnu, sker der intet ved OnPress() */}
-            <TouchableOpacity style = { styles.button2 } onPress = { () => navigation.navigate('Edit Profile')}>
-                <Text style = { styles.buttonText }>Edit Profile</Text>
+            <TouchableOpacity style = { styles.button2 } onPress = { () => navigation.navigate('Organized Events')}>
+                <Text style = { styles.buttonText }>Organized Events</Text>
             </TouchableOpacity>
-            {/* Returnerer knap for listevisning af tilmeldte events. Eftersom funktionaliteten endnu ikke er
-                implementeret, er der sat en navigaitonsreference til 'Registered Events', men da denne ikke
-                eksisterer endnu, sker der intet ved OnPress() */}
-            <TouchableOpacity style = { styles.button2 } onPress = { () => navigation.navigate('Registered Events')}>
-                <Text style = { styles.buttonText }>Registered Events</Text>
+            <TouchableOpacity style = { styles.button3 } onPress = { () => { handleSubmit() } }>
+                <Text style = { styles.buttonText }>Sign Out</Text>
             </TouchableOpacity>
         </View>
             </ScrollView>
@@ -102,7 +104,6 @@ export default function Profile({ navigation }) {
     )
 };
 
-// Opretter stylesheet
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -130,7 +131,8 @@ const styles = StyleSheet.create({
         width: '100%',
         borderRadius:10,
         margin: 5,
-        padding: 5,
+        paddingTop: 5,
+        paddingHorizontal: 5,
         height: 'auto',
         backgroundColor: 'lightgrey'
     },
@@ -157,7 +159,17 @@ const styles = StyleSheet.create({
     button2: {
         margin: 10,
         height: 40,
-        backgroundColor: 'cornflowerblue',
+        backgroundColor: 'grey',
+        borderRadius: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: 150,
+        alignSelf: 'center'
+    },
+    button3: {
+        margin: 10,
+        height: 40,
+        backgroundColor: 'firebrick',
         borderRadius: 10,
         alignItems: 'center',
         justifyContent: 'center',
