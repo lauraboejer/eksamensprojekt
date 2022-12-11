@@ -76,7 +76,7 @@ export default function EditInterests({ navigation, route }) {
     };
 
     return (
-        <SafeAreaView>
+        <SafeAreaView style={{paddingTop: 40}}>
             <ScrollView>
                 <View>
                     <Text style = { styles.header }>Change interests</Text>

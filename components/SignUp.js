@@ -86,7 +86,7 @@ export default function SignUpForm({ navigation }) {
     };
 
     return (
-        <SafeAreaView>
+        <SafeAreaView style={{paddingTop: 40}}>
             <ScrollView>
                 <View>
                     <Text style = { styles.header }>Sign Up</Text>

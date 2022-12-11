@@ -27,7 +27,6 @@ export default function RegisteredHobbies({ navigation }) {
             throw error
         }
     },[]);
-
     if (!hobbies) {
         return (
             <View>
@@ -65,7 +64,7 @@ export default function RegisteredHobbies({ navigation }) {
         }
 
         return (
-            <SafeAreaView>
+            <SafeAreaView style={{paddingTop: 40}}>
                 <View style = {{ height: '100%' }}>
                     <View>
                         <Text style = { styles.header }>Registered Events</Text>

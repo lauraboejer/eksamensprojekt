@@ -13,14 +13,14 @@ export default function EditProfile({ navigation, route}) {
         setEditProfile(profile);
     },[])
 
-    const  handleDelete = () => {
+    const handleDelete = () => {
         try {
             firebase
                 .database()
                 .ref(`/Profiles/${ id }`)
                 .remove();
             firebase.auth().currentUser.delete();
-            navigation.goBack();
+            navigation.navigate('Event List');
         } catch (error) {
             Alert.alert(error.message);
         }
@@ -28,7 +28,7 @@ export default function EditProfile({ navigation, route}) {
 
     const confirmDelete = () => {
         if(Platform.OS === 'ios' || Platform.OS === 'android') {
-            Alert.alert('Are you sure?', 'Do you want to delete this event?', [
+            Alert.alert('Are you sure?', 'Do you want to delete your profile?', [
                 { text: 'Cancel', style: 'cancel' },
                 { text: 'Delete', style: 'destructive', onPress: () => handleDelete() },
             ]);
@@ -58,7 +58,7 @@ export default function EditProfile({ navigation, route}) {
     };
 
     return (
-        <SafeAreaView>
+        <SafeAreaView style={{paddingTop: 40}}>
             <ScrollView>
                 <Text style = { styles.header }>Edit profile</Text>
                 {

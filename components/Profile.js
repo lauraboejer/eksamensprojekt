@@ -60,7 +60,7 @@ export default function Profile({ navigation }) {
     }
 
     return (
-        <SafeAreaView>
+        <SafeAreaView style={{paddingTop: 40}}>
             <Text style = { styles.header }>{ profile.firstName + ' ' + profile.lastName }</Text>
             <ScrollView>
         <View style = { styles.container }>

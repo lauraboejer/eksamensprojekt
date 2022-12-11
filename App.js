@@ -124,7 +124,7 @@ function LoggedIn() {
     return(
         <NavigationContainer>
             <Drawer.Navigator>
-                <Drawer.Screen name = { "All Events" } component = { TabNavigator } options = {{
+                <Drawer.Screen name = {'All Events'} component = { TabNavigator } options = {{
                     headerShown: true, headerTransparent: true, headerTitleStyle: { color: 'transparent' }
                 }}/>
                 <Drawer.Screen name = { "My Profile" } component = { ProfileNavigator } options = {{

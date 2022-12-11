@@ -29,7 +29,7 @@ export default function LogInForm({ navigation }) {
     };
 
     return (
-        <SafeAreaView>
+        <SafeAreaView style={{paddingTop: 40}}>
             <ScrollView>
                 <View>
                     <Text style = { styles.header }>Sign In</Text>

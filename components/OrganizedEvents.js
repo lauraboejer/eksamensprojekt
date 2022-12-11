@@ -29,7 +29,7 @@ export default function OrganizedHobbies({ navigation }) {
 
     if (!hobbies) {
         return (
-            <View>
+            <View style={{paddingTop: 40}}>
                 <Text>Looking for your organized events..</Text>
             </View>
         );
@@ -57,7 +57,7 @@ export default function OrganizedHobbies({ navigation }) {
         }
 
         return (
-            <SafeAreaView>
+            <SafeAreaView style={{paddingTop: 40}}>
                 <View style = {{ height: '100%' }}>
                     <View>
                         <Text style = { styles.header }>Organized Events</Text>

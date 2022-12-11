@@ -93,7 +93,7 @@ export default function AddEditHobby ({ navigation, route }) {
     };
 
     return (
-        <SafeAreaView>
+        <SafeAreaView style={{paddingTop: 40}}>
             <ScrollView>
                 <Text style = { styles.header }>{ isEditHobby ? "Edit event" : "Add event" }</Text>
                 {

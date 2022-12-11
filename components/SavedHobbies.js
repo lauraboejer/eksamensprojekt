@@ -7,7 +7,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 export default function SavedHobbies() {
     const [search, updateSearch] = useState('');
     return (
-        <SafeAreaView>
+        <SafeAreaView style={{paddingTop: 40}}>
             <View>
                 <Text style = { styles.header }>Saved Events</Text>
                 <SearchBar placeholder = "Type Here..." onChangeText = { updateSearch } value = { search } lightTheme = 'false'/>

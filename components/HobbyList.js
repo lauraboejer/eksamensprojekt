@@ -47,7 +47,7 @@ export default function HobbyList({ route, navigation }) {
     const hobbyKeys = Object.keys(hobbies);
 
     return (
-        <SafeAreaView>
+        <SafeAreaView style={{paddingTop: 40}}>
         <View style = {{ height: '100%' }}>
             <View>
                 <Text style = { styles.header }>Event List</Text>

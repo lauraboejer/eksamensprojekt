@@ -63,7 +63,7 @@ function LoggedIn({ route, register, setRegister }) {
     } else {
         if (hobby.organizer === user) {
             return (
-                <SafeAreaView>
+                <SafeAreaView style={{paddingTop: 40}}>
                     <Text style = { styles.header }>{ hobby.name }</Text>
                     <ScrollView>
                         <View style = { styles.container }>
@@ -104,7 +104,7 @@ function LoggedIn({ route, register, setRegister }) {
             );
         } else {
             return (
-                <SafeAreaView>
+                <SafeAreaView style={{paddingTop: 40}}>
                     <Text style = { styles.header }>{ hobby.name }</Text>
                     <ScrollView>
                         <View style = { styles.container }>
