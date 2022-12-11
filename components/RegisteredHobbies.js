@@ -83,9 +83,6 @@ export default function RegisteredHobbies({ navigation }) {
                                 <View style = { styles.row }>
                                     <TouchableOpacity style = { styles.container } onPress = { () => handleSelectHobby(hobbyKeys[index], item) }>
                                         <Text style = {{ fontWeight: 'bold' }}>{ item.name }</Text>
-                                        <TouchableOpacity style = {{ alignItems: 'flex-end' }} onPress = { () => {} }>
-                                            <Ionicons name = "heart-outline" size = { 25 }/>
-                                        </TouchableOpacity>
                                         <Text>{ item.date }</Text>
                                     </TouchableOpacity>
                                 </View>
