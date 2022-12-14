@@ -59,7 +59,7 @@ export default function RegisteredHobbies({ navigation }) {
         function handleSelectHobby(id, item) {
             const hobby = [id, item];
             return (
-                navigation.navigate('Event Details', { hobby })
+                navigation.navigate('Registered Details', { hobby })
             );
         }
 

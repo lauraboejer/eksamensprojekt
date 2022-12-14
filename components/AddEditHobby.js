@@ -84,7 +84,7 @@ export default function AddEditHobby ({ navigation, route }) {
                     .push({ name, category, date, location, description, organizer });
                 Alert.alert(`Saved`);
                 const hobby = [hobbyId, newHobby]
-                navigation.navigate("Organized Events", { hobby });
+                navigation.navigate("Organized Details", { hobby });
                 return setNewHobby(initialState);
             } catch (error) {
                 console.log(`Error: ${ error.message }`);
@@ -95,7 +95,7 @@ export default function AddEditHobby ({ navigation, route }) {
     return (
         <SafeAreaView style={{paddingTop: 40}}>
             <ScrollView>
-                <Text style = { styles.header }>{ isEditHobby ? "Edit event" : "Add event" }</Text>
+                <Text style = { styles.header }>{ isEditHobby ? "Edit Event" : "Add Event" }</Text>
                 {
                     Object.keys(initialState).map((key, index) => {
                         return (

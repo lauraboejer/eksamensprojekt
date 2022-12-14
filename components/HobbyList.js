@@ -7,7 +7,7 @@ import firebase from 'firebase/compat';
 import {SearchBar} from "react-native-elements";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
-export default function HobbyList({ route, navigation }) {
+export default function HobbyList({ navigation }) {
     const [hobbies, setHobbies] = useState();
     const [search, updateSearch] = useState('');
 

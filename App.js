@@ -60,8 +60,8 @@ function ExploreEventsNavigator() {
 function RegisteredEventsNavigator() {
     return(
         <Stack.Navigator>
-            <Stack.Screen name = "Event List" component = { RegisteredHobbies } options = {{ headerShown: null }}/>
-            <Stack.Screen name = "Event Details" component = { HobbyDetails } options = {{ headerShown: null }}/>
+            <Stack.Screen name = "Registered List" component = { RegisteredHobbies } options = {{ headerShown: null }}/>
+            <Stack.Screen name = "Registered Details" component = { HobbyDetails } options = {{ headerShown: null }}/>
         </Stack.Navigator>
     );
 }
@@ -70,9 +70,9 @@ function RegisteredEventsNavigator() {
 function OrganizedEventsNavigator() {
     return(
         <Stack.Navigator>
-            <Stack.Screen name = "Events List" component = { OrganizedHobbies } options = {{ headerShown: null }}/>
-            <Stack.Screen name = "Event Details" component = { HobbyDetails } options = {{ headerShown: null }}/>
-            <Stack.Screen name = "Edit Event" component = { AddEditHobby } options = {{ headerShown: null }}/>
+            <Stack.Screen name = "Organized List" component = { OrganizedHobbies } options = {{ headerShown: null }}/>
+            <Stack.Screen name = "Organized Details" component = { HobbyDetails } options = {{ headerShown: null }}/>
+            <Stack.Screen name = "Edit Organized" component = { AddEditHobby } options = {{ headerShown: null }}/>
         </Stack.Navigator>
     );
 }
@@ -83,7 +83,6 @@ function ProfileNavigator() {
         <Stack.Navigator>
             <Stack.Screen name = "Profile" component = { Profile } options = {{headerShown: null }}/>
             <Stack.Screen name = "Edit Interests" component = { EditInterests } options = {{ headerShown: null }}/>
-            {/*disse to screens er endnu ikke implementerede, hvorfor de er udkommenteret*/}
             <Stack.Screen name = "Edit Profile" component = { EditProfile } options = {{ headerShown: null }}/>
             <Stack.Screen name = "Organized Events" component = { OrganizedEventsNavigator } options = {{ headerShown: null }}/>
         </Stack.Navigator>
@@ -127,10 +126,13 @@ function LoggedIn() {
                 <Drawer.Screen name = {'All Events'} component = { TabNavigator } options = {{
                     headerShown: true, headerTransparent: true, headerTitleStyle: { color: 'transparent' }
                 }}/>
-                <Drawer.Screen name = { "My Profile" } component = { ProfileNavigator } options = {{
+                 <Drawer.Screen name = { "My Profile" } component = { ProfileNavigator } options = {{
                     headerShown: true, headerTransparent: true, headerTitleStyle: { color: 'transparent' }
                 }}/>
                 <Drawer.Screen name = { "My Registered Events" } component = { RegisteredEventsNavigator } options = {{
+                    headerShown: true, headerTransparent: true, headerTitleStyle: { color: 'transparent' }
+                }}/>
+                <Drawer.Screen name = { "My Organized Events" } component = { OrganizedEventsNavigator } options = {{
                     headerShown: true, headerTransparent: true, headerTitleStyle: { color: 'transparent' }
                 }}/>
             </Drawer.Navigator>
