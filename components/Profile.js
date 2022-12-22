@@ -1,26 +1,28 @@
-// Importerer React-elementer
-import React, {useEffect, useState} from 'react';
-import {View, Text, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView} from 'react-native';
+//importerer React-elementer
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, View, Text, TouchableOpacity, SafeAreaView, ScrollView } from 'react-native';
+
+//importerer Firebase-elementer
 import firebase from "firebase/compat";
 
+//opretter funktion for komponenten, som håndterer visning af den aktuelle brugers profil
 export default function Profile({ navigation }) {
-    const email = firebase.auth().currentUser.email
+    const email = firebase.auth().currentUser.email //henter og gemmer brugerens email
     const [profile, setProfile] = useState();
     const [id, setId] = useState();
-    const [errorMessage, setErrorMessage] = useState(null);
-
+    //useEffect køres når siden indlæses og henter data på brugerens profil i databasen
     useEffect(() => {
         try {
             if (!profile) {
                 firebase
                     .database()
-                    .ref(`/Profiles/`)
-                    .orderByChild('email')
+                    .ref(`/Profiles/`) //henter alle profiler i databasen
+                    .orderByChild('email') //arrangerer dem efter email
                     .on('value', snapshot => {
-                        snapshot.forEach(function (profileSnapshot) {
-                            if (profileSnapshot.val().email.toLowerCase() === email) {
-                                setProfile(profileSnapshot.val())
-                                setId(profileSnapshot.key)
+                        snapshot.forEach(function (profileSnapshot) { //itererer gennem alle profiler og deres attributter
+                            if (profileSnapshot.val().email.toLowerCase() === email) { //tjekker om profilens mailadresse matcher den aktuelle bruger
+                                setProfile(profileSnapshot.val()) //gemmer profilen som profile
+                                setId(profileSnapshot.key) //gemmer profilens id som id
                                 return;
                             }
                         });
@@ -30,7 +32,7 @@ export default function Profile({ navigation }) {
             throw error;
         }
     }, []);
-
+    //hvis profile-objektet er tomt, returneres følgende view
     if (!profile) {
         return (
             <View style = { { justifyContent: 'center', flex: 1, alignItems: 'center' } }>
@@ -38,9 +40,9 @@ export default function Profile({ navigation }) {
             </View>
         );
     }
-
+    //gemmer interesser som værdierne i profile-objektets selected-attribut
     const interests = Object.values(profile.selected)
-
+    //opretter funktion som håndterer visning af brugerens interesser i profilen
     function ShowInterests () {
         return interests.map(item => {
             return (
@@ -48,62 +50,69 @@ export default function Profile({ navigation }) {
             );
         });
     }
-
-    const handleSubmit = async () => {
+    //opretter funktion som håndterer at brugeren logges ud
+    const handleSignOut = async () => {
         try {
-            // prædefineret Firebase-funktion
+            //anvender prædefineret Firebase-funktionalitet til at logge brugeren ud
             await firebase.auth().signOut();
-            navigation.goBack();
+            navigation.goBack(); //navigerer brugeren tilbage til startsiden
         } catch (error){
-            setErrorMessage(error.message)
+            throw error.message;
         }
-    }
-
+    };
+    //returnerer view'et for Profile-komponenten
     return (
-        <SafeAreaView style={{paddingTop: 40}}>
+        <SafeAreaView style = {{ paddingTop: 40 }}>
             <Text style = { styles.header }>{ profile.firstName + ' ' + profile.lastName }</Text>
             <ScrollView>
-        <View style = { styles.container }>
-            <View style = { styles.info }>
-                <View style = { styles.row }>
-                    <Text style = { styles.label }>E-mail</Text>
-                    <Text style = { styles.value }>{ profile.email }</Text>
+                {/*anvender scroll view, så brugeren kan rulle på siden*/}
+                <View style = { styles.container }>
+                    <View style = { styles.info }>
+                        <View style = { styles.row }>
+                            <Text style = { styles.label }>E-mail</Text>
+                            <Text style = { styles.value }>{ profile.email }</Text>
+                        </View>
+                        <View style = { styles.row }>
+                            <Text style = { styles.label }>Location</Text>
+                            <Text style = { styles.value }>{ profile.location }</Text>
+                        </View>
+                        <View style = { styles.row }>
+                            <Text style = { styles.label }>Gender</Text>
+                            <Text style = { styles.value }>{ profile.gender }</Text>
+                        </View>
+                        <View style = { styles.row }>
+                            <Text style = { styles.label }>Birthdate</Text>
+                            <Text style = { styles.value }>{ profile.birthdate }</Text>
+                        </View>
+                        {/*viser knap som navigerer brugeren til redigeringssiden for profilen*/}
+                        <TouchableOpacity style = { styles.button2 } onPress = { () => navigation.navigate('Edit Profile', { id, profile }) }>
+                            <Text style = { styles.buttonText }>Edit Profile</Text>
+                        </TouchableOpacity>
+                    </View>
+                    <Text style = { styles.interestText }>Interests</Text>
+                    <View style = { styles.interests }>
+                        {/*kalder visning af brugerens interesser*/}
+                        <ShowInterests/>
+                        {/*viser knap som navigerer brugeren til redigeringssiden for interesser*/}
+                        <TouchableOpacity style = { styles.button1 } onPress = { () => navigation.navigate('Edit Interests', { interests, id }) }>
+                            <Text style = { styles.buttonText }>Edit Interests</Text>
+                        </TouchableOpacity>
+                    </View>
+                    {/*viser knap som navigerer brugeren til listevisning for egne oprettede begivenheder*/}
+                    <TouchableOpacity style = { styles.button2 } onPress = { () => navigation.navigate('Organized Events')}>
+                        <Text style = { styles.buttonText }>Organized Events</Text>
+                    </TouchableOpacity>
+                    {/*viser knap som håndterer at brugeren logger ud*/}
+                    <TouchableOpacity style = { styles.button3 } onPress = { () => { handleSignOut() } }>
+                        <Text style = { styles.buttonText }>Sign Out</Text>
+                    </TouchableOpacity>
                 </View>
-                <View style = { styles.row }>
-                    <Text style = { styles.label }>Location</Text>
-                    <Text style = { styles.value }>{ profile.location }</Text>
-                </View>
-                <View style = { styles.row }>
-                    <Text style = { styles.label }>Gender</Text>
-                    <Text style = { styles.value }>{ profile.gender }</Text>
-                </View>
-                <View style = { styles.row }>
-                    <Text style = { styles.label }>Birthdate</Text>
-                    <Text style = { styles.value }>{ profile.birthdate }</Text>
-                </View>
-                <TouchableOpacity style = { styles.button2 } onPress = { () => navigation.navigate('Edit Profile', { id, profile }) }>
-                    <Text style = { styles.buttonText }>Edit Profile</Text>
-                </TouchableOpacity>
-            </View>
-            <Text style = { styles.interestText }>Interests</Text>
-            <View style = { styles.interests }>
-                <ShowInterests/>
-                <TouchableOpacity style = { styles.button1 } onPress = { () => navigation.navigate('Edit Interests', { interests, id }) }>
-                    <Text style = { styles.buttonText }>Edit Interests</Text>
-                </TouchableOpacity>
-            </View>
-            <TouchableOpacity style = { styles.button2 } onPress = { () => navigation.navigate('Organized Events')}>
-                <Text style = { styles.buttonText }>Organized Events</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style = { styles.button3 } onPress = { () => { handleSubmit() } }>
-                <Text style = { styles.buttonText }>Sign Out</Text>
-            </TouchableOpacity>
-        </View>
             </ScrollView>
         </SafeAreaView>
-    )
+    );
 };
 
+//opretter stylesheet for komponenten
 const styles = StyleSheet.create({
     container: {
         flex: 1,

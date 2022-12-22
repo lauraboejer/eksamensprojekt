@@ -1,45 +1,41 @@
-// importerer React-elementer
+//importerer React-elementer
 import React, { useState } from 'react';
-import {Button, Text, View, TextInput, StyleSheet, TouchableOpacity, SafeAreaView, ScrollView} from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, SafeAreaView, ScrollView } from 'react-native';
 
-// importerer Firebase-elementer
+//importerer Firebase-elementer
 import firebase from "firebase/compat";
-import { initializeApp } from "firebase/app";
 
-export default function LogInForm({ navigation }) {
+//opretter funktion for komponenten som håndterer at brugeren logger ind
+export default function SignIn({ navigation }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState(null);
-
-    const handleSubmit = async () => {
+    //opretter funktion som håndterer log ind i Firebase Authentification
+    const handleSignIn = async () => {
         try {
             await
-                firebase
-                    .auth()
-                    .signInWithEmailAndPassword(email, password);
+                //anvender prædefineret Firebase-funktionalitet til at logge ind med password og e-mail
+                firebase.auth().signInWithEmailAndPassword(email, password);
         } catch (error){
             setErrorMessage(error.message);
         }
     };
-
-    const renderButton = () => {
-        return <TouchableOpacity onPress = { () => handleSubmit() } style = { styles.button1 }>
-            <Text style = { styles.buttonText }>Sign In</Text>
-        </TouchableOpacity>
-    };
-
+    //returnerer view'et for SignIn-komponenten
     return (
-        <SafeAreaView style={{paddingTop: 40}}>
+        <SafeAreaView style = {{ paddingTop: 40 }}>
             <ScrollView>
+                {/*anvender scroll view, så brugeren kan rulle på siden*/}
                 <View>
                     <Text style = { styles.header }>Sign In</Text>
                 </View>
+                {/*tekstinput for e-mail*/}
                 <TextInput
                     placeholder = "E-mail"
                     value = { email }
                     onChangeText = { (email) => setEmail(email) }
                     style = { styles.input }
                 />
+                {/*tekstinput for password*/}
                 <TextInput
                     placeholder = "Password"
                     value = { password }
@@ -47,11 +43,16 @@ export default function LogInForm({ navigation }) {
                     secureTextEntry
                     style = {styles.input}
                 />
+                {/*viser fejlbesked ved log ind*/}
                 { errorMessage && (
                     <Text style = { styles.error }>Error: { errorMessage }</Text>
                 )}
-                { renderButton() }
+                {/*viser knap som logger brugeren ind*/}
+                <TouchableOpacity onPress = { () => handleSignIn() } style = { styles.button1 }>
+                    <Text style = { styles.buttonText }>Sign In</Text>
+                </TouchableOpacity>
                 <Text style = {{ alignSelf: 'center', paddingTop: 20 }}>Don't have an account?</Text>
+                {/*viser knap som fører brugeren til Sign Up-siden, hvis de ikke allerede har en brugerprofil*/}
                 <TouchableOpacity onPress={ () => navigation.navigate('Sign Up') } style = { styles.button2 }>
                     <Text style = { styles.buttonText }>Sign up now!</Text>
                 </TouchableOpacity>
@@ -60,7 +61,7 @@ export default function LogInForm({ navigation }) {
     );
 }
 
-//Lokal styling til brug i LoginFrom
+//opretter stylesheet for komponenten
 const styles = StyleSheet.create({
     error: {
         color: 'red',

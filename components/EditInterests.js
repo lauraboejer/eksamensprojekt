@@ -1,22 +1,28 @@
+//import React-elementer
 import React, { useState } from 'react';
-import { TouchableOpacity, Text, View, StyleSheet, SafeAreaView, ScrollView} from 'react-native';
-import firebase from "firebase/compat";
+import { StyleSheet, TouchableOpacity, Text, View, SafeAreaView, ScrollView} from 'react-native';
 import Ionicons from "react-native-vector-icons/Ionicons";
-import {MultiSelect} from "react-native-element-dropdown";
+import { MultiSelect } from "react-native-element-dropdown";
 
+//importerer Firebase-elementer
+import firebase from "firebase/compat";
+
+//opretter funktion for komponenten som håndterer ændringer i og tilføjelser af interesser
 export default function EditInterests({ navigation, route }) {
-    const interests = route.params.interests;
-    const id = route.params.id;
+    const interests = route.params.interests; //deklarerer interests på baggrund af parametre fra forrige screen
+    const id = route.params.id; //deklarerer ID på baggrund af parametre fra forrige screen
     const [selected, setSelected] = useState(interests);
-
+    //opretter funktion som håndterer dropdown-funktionalitet for interesser
+    //funktionaliteten er implementeret med inspiration fra: https://www.nicesnippets.com/blog/how-to-use-multiple-select-dropdown-in-react-native
     function Dropdown() {
+        //opretter prædefinerede interessekategorier
         const interests = [
             { label: 'Sports', value: 'Sports' },
             { label: 'Arts and crafts', value: 'Arts and crafts' },
             { label: 'Outdoors', value: 'Outdoors' },
             { label: 'Gastronomy', value: 'Gastronomy' },
         ];
-
+        //returnerer view'et for dropdown-funktionen
         return (
             <MultiSelect
                 style = { dropdownStyles.dropdown }
@@ -35,13 +41,15 @@ export default function EditInterests({ navigation, route }) {
                     setSelected(item);
                 }}
                 renderItem = { (item) => {
+                    //returnerer visning af interessekategorier
                     return (
-                        <View style={dropdownStyles.item}>
-                            <Text style={dropdownStyles.selectedTextStyle}>{item.label}</Text>
+                        <View style = { dropdownStyles.item }>
+                            <Text style = { dropdownStyles.selectedTextStyle }>{ item.label }</Text>
                         </View>
                     );
                 }}
                 renderSelectedItem = { (item, unSelect) => (
+                    //returnerer visning af valgte interesser, som slettes ved tryk
                     <TouchableOpacity onPress={ () => unSelect && unSelect(item) }>
                         <View style = { dropdownStyles.selectedStyle }>
                             <Text style = { dropdownStyles.textSelectedStyle }>{ item.label }</Text>
@@ -52,7 +60,7 @@ export default function EditInterests({ navigation, route }) {
             />
         );
     }
-
+    //opretter funktion som håndterer opdatering af interesser i databasen på baggrund af brugerens ID
     const handleData = async() => {
         try {
             await
@@ -61,35 +69,38 @@ export default function EditInterests({ navigation, route }) {
                     .ref(`/Profiles/${id}/`)
                     .update({"selected": selected});
         } catch (error) {
-            console.log(error.message)
+            console.log(error.message) //returnerer en fejlbesked i terminalen, hvis der opstår fejl
         }
     };
-
+    //opretter funktion som kalder handleData og navigerer brugeren tilbage til profilsiden
     const handleSubmit = async() => {
         try {
             await
                 handleData(selected)
             navigation.navigate('Profile')
         } catch (error){
-            setErrorMessage(error.message)
+            console.log(error.message) //returnerer en fejlbesked i terminalen, hvis der opstår fejl
         }
     };
-
+    //returnerer view'et for EditInterests-komponenten
     return (
-        <SafeAreaView style={{paddingTop: 40}}>
+        <SafeAreaView style = {{ paddingTop: 40 }}>
             <ScrollView>
+                {/*anvender scroll view, så brugeren kan rulle på siden*/}
                 <View>
                     <Text style = { styles.header }>Change interests</Text>
-                <Dropdown/>
-                <TouchableOpacity onPress = { () => handleSubmit() } style = { styles.button1 }>
-                    <Text style = { styles.buttonText }>{ "Save changes" }</Text>
-                </TouchableOpacity>
+                    {/*kalder dropdown-funktionen*/}
+                    <Dropdown/>
+                    <TouchableOpacity onPress = { () => handleSubmit() } style = { styles.button1 }>
+                        <Text style = { styles.buttonText }>{ "Save changes" }</Text>
+                    </TouchableOpacity>
                 </View>
             </ScrollView>
         </SafeAreaView>
     );
 };
 
+//opretter stylesheet for komponenten
 const styles = StyleSheet.create({
     error: {
         color: 'red',
@@ -139,7 +150,7 @@ const styles = StyleSheet.create({
         fontSize: 12
     }
 });
-
+//opretter stylesheet for dropdown-visning
 const dropdownStyles = StyleSheet.create({
     dropdownContainer: {
         backgroundColor: '#37d5d2a2',
